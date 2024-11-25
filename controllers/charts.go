@@ -15,3 +15,14 @@ func GetChartDetails() (returnData utilities.ResponseJson, err error) {
 	utilities.NewSuccessResponse(&returnData, data)
 	return
 }
+
+func GetScatterChartDetails() (returnData utilities.ResponseJson, err error) {
+	data, err := database.GetScatterChartDetails()
+
+	if err != nil {
+		return returnData, err
+	}
+
+	utilities.NewSuccessResponse(&returnData, data)
+	return
+}

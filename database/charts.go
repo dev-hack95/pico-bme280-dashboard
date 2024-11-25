@@ -22,7 +22,7 @@ func GetChartDetails() ([]structs.Data, error) {
 
 	defer db.Close()
 
-	query := "SELECT humidity, pressure, temperature, timestamp FROM sensor_readings ORDER BY timestamp DESC LIMIT 1000"
+	query := "SELECT humidity, pressure, temperature, timestamp FROM sensor_readings ORDER BY timestamp DESC LIMIT 30"
 
 	rows, err := db.Query(query)
 
@@ -61,4 +61,47 @@ func removeLastC(input string) string {
 		return input[:len(input)-1]
 	}
 	return input
+}
+
+func GetScatterChartDetails() ([][2]float64, error) {
+	var data [][2]float64
+	var humidity, tempreate string
+
+	db, err := sql.Open("sqlite3", os.Getenv("DB"))
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer db.Close()
+
+	query := "SELECT humidity, temperature FROM sensor_readings ORDER BY timestamp DESC LIMIT 30"
+
+	rows, err := db.Query(query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var record [2]float64
+		err := rows.Scan(
+			&humidity,
+			&tempreate,
+		)
+
+		if err != nil {
+			return nil, err
+		}
+
+		record[1] = cast.ToFloat64(humidity)
+		record[0] = cast.ToFloat64(removeLastC(tempreate))
+
+		data = append(data, record)
+
+	}
+
+	return data, nil
 }

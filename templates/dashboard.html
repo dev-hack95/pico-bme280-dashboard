@@ -76,6 +76,9 @@
     </div>
     
     <div class="dashboard-grid">
+        <div id="outerSwapScatter" hx-get="/pico/dashboard/chart/scatter" hx-trigger="every 3s" hx-swap="outerHTML" class="chart-container">
+            <div id="outerChartScatter" class="chart"></div>
+        </div>
         <div id="outerSwapHumidity" hx-get="/pico/dashboard/chart/humidity" hx-swap="outerHTML"  hx-trigger="every 3s" class="chart-container" >
             <div id="outerChartHumidity" class="chart"></div>
         </div>
@@ -126,6 +129,32 @@
                         opacity: 0.2
                     },
                     animation: false
+                }]
+            };
+            chart.setOption(option);
+        }
+
+        function initScatterChart(elementId, data) {
+            const chart = echarts.init(document.getElementById(elementId));
+            const option = {
+                title: {
+                    text: 'Scatter Plot Analysis'
+                },
+                xAxis: {
+                    type: 'value',
+                    name: 'X Value'
+                },
+                yAxis: {
+                    type: 'value',
+                    name: 'Y Value'
+                },
+                series: [{
+                    symbolSize: 20,
+                    data: data,
+                    type: 'scatter',
+                    itemStyle: {
+                        color: '#007bff'
+                    }
                 }]
             };
             chart.setOption(option);

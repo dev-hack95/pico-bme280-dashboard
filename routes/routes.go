@@ -21,4 +21,5 @@ func RegisterRoutes(r *gin.Engine) {
 	r.GET("/pico/dashboard/chart/humidity", handlers.GetHumidityChartDetails)
 	r.GET("/pico/dashboard/chart/temperature", handlers.GetTempreatureChartDetails)
 	r.GET("/pico/dashboard/chart/pressure", handlers.GetPressureChartDetails)
+	r.GET("/pico/dashboard/chart/scatter", handlers.GetScatterChartDetails)
 }

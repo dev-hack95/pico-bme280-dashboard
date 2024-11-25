@@ -156,3 +156,51 @@ func GetPressureChartDetails(c *gin.Context) {
 		return
 	}
 }
+
+func GetScatterChartDetails(c *gin.Context) {
+	var err error
+	returnData := utilities.ResponseJson{}
+	errAuth := utilities.GetUserSessionDetails(c)
+	flag := true
+
+	if errAuth != nil {
+		flag = false
+		c.Header("Hx-Redirect", "/")
+		c.Status(200)
+		return
+	}
+
+	switch {
+	case flag:
+		returnData, err = controllers.GetScatterChartDetails()
+		if err != nil {
+			utilities.ErrorResponse(&returnData, err.Error())
+			c.JSON(400, returnData)
+			c.Status(400)
+			return
+		}
+
+		if returnData.Msg == "Success" {
+			tmpl := `
+			<div id="outerSwapScatter"
+				 hx-get="/pico/dashboard/chart/scatter"
+				 hx-trigger="every 3s"
+				 hx-swap="outerHTML"
+				 class="chart-container">
+				<h2>Scatter Plot</h2>
+				<div id="outerChartScatter" class="chart"></div>
+				<script>
+					initScatterChart('outerChartScatter', {{.}});
+				</script>
+			</div>
+			`
+			t := template.Must(template.New("outer").Parse(tmpl))
+			t.Execute(c.Writer, returnData.Data)
+		}
+
+	default:
+		utilities.ErrorResponse(&returnData, "Something went wrong")
+		c.JSON(400, returnData)
+		return
+	}
+}
